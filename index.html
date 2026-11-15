@@ -1,0 +1,31 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FAYO & NEMO</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a1624">
+<link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="FAYO & NEMO">
+<style>html,body{margin:0;height:100%;background:#0a1624;color:#cfe0f5;font-family:system-ui,sans-serif}
+#sp{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+#sp img{width:140px;height:140px;border-radius:32px;animation:b 1.6s ease-in-out infinite}
+@keyframes b{50%{transform:scale(1.06)}}#sp p{margin:0;font-size:15px;opacity:.8}</style></head>
+<body><div id="sp"><img src="icon.png" alt="FAYO & NEMO"><p>جاري فتح التطبيق…</p></div>
+<script>
+const API='https://script.google.com/macros/s/AKfycbxinZDpo8S8QWmr4yd7pRddDMecxoLNS2CX2tBNVwhNoKdRWxacSFSk6KF5Q0TCJiDZ/exec';
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+(async()=>{
+  const q=new URLSearchParams(location.search),kind=q.has('reg')?'reg':'front',key='fn_'+kind;
+  let html='';
+  try{const r=await fetch(API+'?asset='+kind,{cache:'no-store'});if(!r.ok)throw 0;html=await r.text();if(html.length<1000)throw 0;try{localStorage.setItem(key,html)}catch(e){}}
+  catch(e){try{html=localStorage.getItem(key)||''}catch(x){}}
+  if(!html){document.querySelector('#sp p').textContent='مفيش اتصال بالإنترنت. اتأكد من النت وافتح التطبيق تاني.';return}
+  const P={k:q.get('k')||'',c:q.get('c')||'',url:location.origin+location.pathname.replace(/index\.html$/,'')};
+  const SHIM="window.__API="+JSON.stringify(API)+";window.google={script:{run:(function(){function mk(s,f){return new Proxy({},{get(_,n){if(n==='withSuccessHandler')return h=>mk(h,f);if(n==='withFailureHandler')return h=>mk(s,h);return (...a)=>{const body=n==='register'?{action:'register',payload:a[0]}:{action:a[0],token:a[1],payload:a[2]};fetch(window.__API,{method:'POST',body:JSON.stringify(body)}).then(r=>r.json()).then(r=>{if(n==='register'&&r&&r.ok===false){f&&f(new Error(r.error||'خطأ'));return}s&&s(r)}).catch(e=>{f&&f(new Error('مفيش اتصال بالإنترنت'))})}}})}return mk(null,null)})()}};";
+  html=html.replace('window.__GAS=<?= gas ?>;window.__PARAM=<?!= param ?>;','window.__GAS=true;window.__PARAM='+JSON.stringify(P).replace(/</g,'\\x3c')+';'+SHIM);
+  if(kind==='reg')html=html.replace('<script>','<script>'+SHIM);
+  const head=document.head.innerHTML.replace(/<style>[\s\S]*?<\/style>/,'');
+  html=html.replace(/<head>/i,'<head>'+head);
+  document.open();document.write(html);document.close();
+})();
+</script></body></html>
